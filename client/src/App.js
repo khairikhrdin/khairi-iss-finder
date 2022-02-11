@@ -1,11 +1,12 @@
 import "./App.css";
 import Axios from "axios";
 import Map from "./map.js";
+import { useState, useEffect } from "react";
 
 function App() {
   const [loading, setLoading] = useState(false);
-  const [longitude, setLongitude] = useState();
-  const [latitude, setLatitude] = useState();
+  const [longitude, setLongitude] = useState(101.9758);
+  const [latitude, setLatitude] = useState(4.2105);
 
   const getLocation = async () => {
     setLoading(true);
@@ -16,7 +17,7 @@ function App() {
 
     console.log(res);
 
-    const { longtitude, latitude } = await res.data;
+    const { longitude, latitude } = await res.data;
 
     let tempLng = parseFloat(longitude);
     let tempLat = parseFloat(latitude);
@@ -29,6 +30,10 @@ function App() {
 
     setLoading(false);
   };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
 
   return (
     <div className="App">
