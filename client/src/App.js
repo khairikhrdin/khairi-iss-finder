@@ -44,7 +44,7 @@ function App() {
 
     setLongitude(tempLng);
     setLatitude(tempLat);
-    setTimeStamp(Date.parse(datetime));
+    setTimeStamp(parseInt(Math.floor(datetime.getTime() / 1000))); //Convert to seconds
     setLoading(false);
   };
 
@@ -80,8 +80,8 @@ function App() {
               <DateTimePicker
                 onChange={(datetime) => {
                   setDateTime(datetime);
-                  // setTimeStamp(parseInt(Math.floor(datetime.getTime() / 1000)));
-                  setTimeStamp(Date.parse(datetime));
+                  setTimeStamp(parseInt(Math.floor(datetime.getTime() / 1000)));
+                  // setTimeStamp(Date.parse(datetime));
                 }}
                 value={datetime}
               />
