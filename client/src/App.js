@@ -5,8 +5,9 @@ import { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import DateTimePicker from "react-datetime-picker";
 import GoogleMapReact from "google-map-react";
-import iss from "./img/iss.png";
+import screen from "./img/loading.gif";
 import Marker from "./Marker.tsx";
+import Popup from "react";
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -16,29 +17,30 @@ function App() {
   const [timeStamp, setTimeStamp] = useState(0);
   const [selectedDateList, setSelectedDateList] = useState([]);
 
-  const getDefaultLocation = async () => {
+  const initPage = async () => {
     setLoading(true); // Wait for response
 
-    const res = await Axios.get(
-      "https://api.wheretheiss.at/v1/satellites/25544"
-    );
+    // const res = await Axios.get(
+    //   "https://api.wheretheiss.at/v1/satellites/25544"
+    // );
 
-    const { longitude, latitude } = await res.data;
+    // const { longitude, latitude } = await res.data;
 
-    let tempLng = parseFloat(longitude);
-    let tempLat = parseFloat(latitude);
+    // let tempLng = parseFloat(longitude);
+    // let tempLat = parseFloat(latitude);
 
-    console.log(res);
-    console.log(tempLng);
-    console.log(tempLat);
+    // console.log(res);
+    // console.log(tempLng);
+    // console.log(tempLat);
 
-    setLongitude(tempLng);
-    setLatitude(tempLat);
+    // setLongitude(tempLng);
+    // setLatitude(tempLat);
     setTimeStamp(parseInt(Math.floor(datetime.getTime() / 1000))); //Convert to seconds
-    setLoading(false);
+    setTimeout(function() {
+      setLoading(false);
+    }, 1500);
+    
   };
-
-  // const getSelectedLocation = async () => {};
 
   const postTimestamp = async (e) => {
     e.preventDefault();
@@ -47,8 +49,8 @@ function App() {
       timeStamp,
     })
       .then((response) => {
-        console.log("response data");
-        console.log(response.data);
+        // console.log("response data");
+        // console.log(response.data);
         setSelectedDateList(response.data);
         console.log(selectedDateList);
       })
@@ -58,7 +60,7 @@ function App() {
   };
 
   useEffect(() => {
-    getDefaultLocation();
+    initPage();
   }, []);
 
   return (
@@ -74,52 +76,42 @@ function App() {
                 key: "AIzaSyBvbcIC2I9QjQxZp0YqS2WeX8kysRrP-ds",
               }}
               defaultCenter={{ lat: latitude, lng: longitude }}
-              defaultZoom={6.5}
+              defaultZoom={2}
             >
               {selectedDateList.map((val, key) => {
                 return (
-                  // <img
-                  //   src={iss}
-                  //   className="iss-img"
-                  //   lat={val.latitude}
-                  //   lng={val.longitude}
-                  // />
-
                   <Marker
                     lat={val.latitude}
                     lng={val.longitude}
-                    name="MARKER BIJ"
-                    color="red"
+                    color="blue"
+                    date={new Date(val.timestamp * 1000).toLocaleDateString()}
+                    time={new Date(val.timestamp * 1000).toLocaleTimeString()}
                   />
                 );
               })}
-              {/* <img
-                src={iss}
-                className="iss-img"
-                lat={latitude}
-                lng={longitude}
-              /> */}
             </GoogleMapReact>
           </div>
         </center>
       ) : (
-        <h1>Loading</h1>
+        <center><img src={screen} align="center"/></center>
       )}
       <p>
         <center>
-        <form onSubmit={postTimestamp}>
-          <DateTimePicker
-            onChange={(datetime) => {
-              setDateTime(datetime);
-              setTimeStamp(parseInt(Math.floor(datetime.getTime() / 1000)));
-            }}
-            value={datetime}
-          />
-          <p>{timeStamp}</p>
-          <button onCLick="update" type="submit">
-            Find Date
-          </button>
-        </form>
+          <form onSubmit={postTimestamp}>
+            <DateTimePicker
+              onChange={(datetime) => {
+                setDateTime(datetime);
+                setTimeStamp(parseInt(Math.floor(datetime.getTime() / 1000)));
+              }}
+              value={datetime}
+            />
+            {/* <p>{timeStamp}</p> */}
+            <p>
+              <button onCLick="update" type="submit">
+                Track ISS
+              </button>
+            </p>
+          </form>
         </center>
       </p>
     </div>

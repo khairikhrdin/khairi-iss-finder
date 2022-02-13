@@ -1,19 +1,28 @@
-import React from 'react';
-import './App.css';
+import React from "react";
+import "./App.css";
 
 const Marker = (props: any) => {
-    const { color, name, id } = props;
-    return (
-      <div>
+  const { color, name, id, lat, lng, time, date } = props;
+  return (
+    <div>
+      <div className="wrapper">
         <div
           className="pin bounce"
-          style={{ backgroundColor: color, cursor: 'pointer' }}
+          style={{ backgroundColor: color, cursor: "pointer" }}
           title={name}
         />
         <div className="pulse" />
-        <div className="coordinate"><p>Testing bro</p></div>
+        <div className="coor">
+          <p>
+            Coordinate: {lat.toFixed(4)},{lng.toFixed(4)}
+          </p>
+          <p>Date: {date.toString()}</p>
+          <p>Time: {time.toString()}</p>
+          
+        </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-  export default Marker;
+export default Marker;
