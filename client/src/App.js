@@ -14,7 +14,7 @@ function App() {
   const [longitude, setLongitude] = useState(101.9758);
   const [latitude, setLatitude] = useState(4.2105);
   const [datetime, setDateTime] = useState(new Date());
-  const [inputValue, setInputValue] = useState("");
+  const [timeStamp, setTimeStamp] = useState(0);
 
   const getLocation = async () => {
     setLoading(true);
@@ -44,15 +44,8 @@ function App() {
 
     setLongitude(tempLng);
     setLatitude(tempLat);
-
+    setTimeStamp(Date.parse(datetime));
     setLoading(false);
-  };
-
-  let onChange = (event) => {
-    const newValue = event.target.value;
-    let testVal = Math.floor(newValue.getTime() / 1000);
-    console.log(testVal);
-    setInputValue(newValue);
   };
 
   async function postDate(e) {
@@ -60,7 +53,7 @@ function App() {
 
     try {
       await Axios.post("http://localhost:3001/post_date", {
-        datetime,
+        timeStamp,
       });
     } catch (error) {
       console.log(error);
@@ -87,8 +80,8 @@ function App() {
               <DateTimePicker
                 onChange={(datetime) => {
                   setDateTime(datetime);
-                  let testVal = Math.floor(datetime.getTime() / 1000);
-                  console.log(testVal);
+                  // setTimeStamp(parseInt(Math.floor(datetime.getTime() / 1000)));
+                  setTimeStamp(Date.parse(datetime));
                 }}
                 value={datetime}
               />
@@ -113,7 +106,8 @@ function App() {
               /> */}
               {/* <input placeholder="testing here boi.." onChange={onChange} /> */}
               {/* <p>{inputValue}</p> */}
-              <p>{Math.floor(datetime.getTime() / 1000).toString()}</p>
+              {/* <p>{Math.floor(datetime.getTime() / 1000).toString()}</p> */}
+              <p>{timeStamp}</p>
               <button onCLick="update" type="submit">
                 Find Date
               </button>
