@@ -1,8 +1,9 @@
 import GoogleMapReact from "google-map-react";
 import iss from "./img/iss.png";
-// import "./App.css";
+import "./App.css";
 
 function Map({ center, zoom }) {
+
   return (
       <div style={{ height: "50vh", width: "100vw" }} className="map-container">
         <GoogleMapReact

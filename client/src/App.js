@@ -1,44 +1,34 @@
 import "./App.css";
 import Axios from "axios";
-import Map from "./map.js";
+// import Map from "./map.js";
 import { useState, useEffect } from "react";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
 import DateTimePicker from "react-datetime-picker";
-// import "flatpickr/dist/themes/material_green.css";
-// import Flatpickr from "react-flatpickr";
+import GoogleMapReact from "google-map-react";
+import iss from "./img/iss.png";
+import Marker from "./Marker.tsx";
 
 function App() {
   const [loading, setLoading] = useState(false);
-  const [longitude, setLongitude] = useState(101.9758);
-  const [latitude, setLatitude] = useState(4.2105);
+  const [longitude, setLongitude] = useState(0);
+  const [latitude, setLatitude] = useState(0);
   const [datetime, setDateTime] = useState(new Date());
   const [timeStamp, setTimeStamp] = useState(0);
+  const [selectedDateList, setSelectedDateList] = useState([]);
 
-  const getLocation = async () => {
-    setLoading(true);
+  const getDefaultLocation = async () => {
+    setLoading(true); // Wait for response
 
     const res = await Axios.get(
       "https://api.wheretheiss.at/v1/satellites/25544"
     );
 
-    // const res1 = await Axios.get("http://api.open-notify.org/astros.json");
-
-    console.log(res);
-    // console.log(res1);
-
     const { longitude, latitude } = await res.data;
-    // let people = await res.data.people;
-
-    // let arr = [];
-    // Object.keys(people).forEach(function(key) {
-    //   arr.push(people[key]);
-    // });
 
     let tempLng = parseFloat(longitude);
     let tempLat = parseFloat(latitude);
 
+    console.log(res);
     console.log(tempLng);
     console.log(tempLat);
 
@@ -48,75 +38,90 @@ function App() {
     setLoading(false);
   };
 
-  async function postDate(e) {
+  // const getSelectedLocation = async () => {};
+
+  const postTimestamp = async (e) => {
     e.preventDefault();
 
-    try {
-      await Axios.post("http://localhost:3001/post_date", {
-        timeStamp,
+    await Axios.post("http://localhost:3001/post_date", {
+      timeStamp,
+    })
+      .then((response) => {
+        console.log("response data");
+        console.log(response.data);
+        setSelectedDateList(response.data);
+        console.log(selectedDateList);
+      })
+      .catch((error) => {
+        console.log(error);
       });
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  };
 
   useEffect(() => {
-    getLocation();
+    getDefaultLocation();
   }, []);
 
   return (
     <div className="App">
       {!loading ? (
         <center>
-          <Map
-            center={{
-              lat: latitude,
-              lng: longitude,
-            }}
-            zoom={6.5}
-          />
-          <p>
-            <form onSubmit={postDate}>
-              <DateTimePicker
-                onChange={(datetime) => {
-                  setDateTime(datetime);
-                  setTimeStamp(parseInt(Math.floor(datetime.getTime() / 1000)));
-                  // setTimeStamp(Date.parse(datetime));
-                }}
-                value={datetime}
-              />
-              {/* <Flatpickr
-                data-enable-time
-                key={datetime}
-                value={datetime}
-                onChange={onChange}
-                options={{
-                  // maxDate: "today",
-                  time_24hr: "true",
-                }}
-              /> */}
+          <div
+            style={{ height: "80vh", width: "100vw" }}
+            className="map-container"
+          >
+            <GoogleMapReact
+              bootstrapURLKeys={{
+                key: "AIzaSyBvbcIC2I9QjQxZp0YqS2WeX8kysRrP-ds",
+              }}
+              defaultCenter={{ lat: latitude, lng: longitude }}
+              defaultZoom={6.5}
+            >
+              {selectedDateList.map((val, key) => {
+                return (
+                  // <img
+                  //   src={iss}
+                  //   className="iss-img"
+                  //   lat={val.latitude}
+                  //   lng={val.longitude}
+                  // />
 
-              {/* <DatePicker
-                selected={datetime}
-                onChange={(datetime) => {
-                  setDateTime(datetime);
-                  return datetime;
-                }}
-                showTimeSelect
+                  <Marker
+                    lat={val.latitude}
+                    lng={val.longitude}
+                    name="MARKER BIJ"
+                    color="red"
+                  />
+                );
+              })}
+              {/* <img
+                src={iss}
+                className="iss-img"
+                lat={latitude}
+                lng={longitude}
               /> */}
-              {/* <input placeholder="testing here boi.." onChange={onChange} /> */}
-              {/* <p>{inputValue}</p> */}
-              {/* <p>{Math.floor(datetime.getTime() / 1000).toString()}</p> */}
-              <p>{timeStamp}</p>
-              <button onCLick="update" type="submit">
-                Find Date
-              </button>
-            </form>
-          </p>
+            </GoogleMapReact>
+          </div>
         </center>
       ) : (
         <h1>Loading</h1>
       )}
+      <p>
+        <center>
+        <form onSubmit={postTimestamp}>
+          <DateTimePicker
+            onChange={(datetime) => {
+              setDateTime(datetime);
+              setTimeStamp(parseInt(Math.floor(datetime.getTime() / 1000)));
+            }}
+            value={datetime}
+          />
+          <p>{timeStamp}</p>
+          <button onCLick="update" type="submit">
+            Find Date
+          </button>
+        </form>
+        </center>
+      </p>
     </div>
   );
 }

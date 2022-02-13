@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const axios = require("axios");
-const { response } = require("express");
 
 app.use(express.json());
 app.use(cors());
@@ -27,19 +26,22 @@ app.post("/post_date", async (req, res) => {
 
   // const concatVar = concatArr.concat(minusHourTS, plusHourTS);
   // console.log(concatVar);
-  
+
   console.log("Minus: " + minusHourTS);
   console.log("Plus: " + plusHourTS);
 
   axios
     .get(
       "https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=" +
-        minusHourTS + ", " +
-        timeStamp + ", " +
+        minusHourTS +
+        ", " +
+        timeStamp +
+        ", " +
         plusHourTS
     )
     .then((response) => {
-      console.log(response.data);
+      // console.log(response.data);
+      res.send(response.data);
     })
     .catch((error) => {
       console.log(error);
