@@ -21,9 +21,9 @@ function App() {
 
     await Axios.get("http://localhost:3001/get_people")
       .then((response) => {
-        console.log(response.data.people);
+        // console.log(response.data.people);
         setPeopleList(response.data.people);
-        console.log(peopleList);
+        // console.log(peopleList);
       })
       .catch((error) => {
         console.log(error);
