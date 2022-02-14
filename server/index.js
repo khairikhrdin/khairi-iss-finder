@@ -27,8 +27,8 @@ app.post("/post_date", async (req, res) => {
   // const concatVar = concatArr.concat(minusHourTS, plusHourTS);
   // console.log(concatVar);
 
-  console.log("Minus: " + minusHourTS);
-  console.log("Plus: " + plusHourTS);
+  // console.log("Minus: " + minusHourTS);
+  // console.log("Plus: " + plusHourTS);
 
   axios
     .get(
@@ -39,6 +39,18 @@ app.post("/post_date", async (req, res) => {
         ", " +
         plusHourTS
     )
+    .then((response) => {
+      // console.log(response.data);
+      res.send(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+});
+
+app.get("/get_people", async (req, res) => {
+  axios
+    .get("http://api.open-notify.org/astros.json")
     .then((response) => {
       // console.log(response.data);
       res.send(response.data);

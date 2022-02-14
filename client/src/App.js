@@ -1,13 +1,11 @@
 import "./App.css";
 import Axios from "axios";
-// import Map from "./map.js";
 import { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import DateTimePicker from "react-datetime-picker";
 import GoogleMapReact from "google-map-react";
 import screen from "./img/loading.gif";
 import Marker from "./Marker.tsx";
-import Popup from "react";
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -16,30 +14,25 @@ function App() {
   const [datetime, setDateTime] = useState(new Date());
   const [timeStamp, setTimeStamp] = useState(0);
   const [selectedDateList, setSelectedDateList] = useState([]);
+  const [peopleList, setPeopleList] = useState([]);
 
   const initPage = async () => {
     setLoading(true); // Wait for response
 
-    // const res = await Axios.get(
-    //   "https://api.wheretheiss.at/v1/satellites/25544"
-    // );
+    await Axios.get("http://localhost:3001/get_people")
+      .then((response) => {
+        console.log(response.data.people);
+        setPeopleList(response.data.people);
+        console.log(peopleList);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
-    // const { longitude, latitude } = await res.data;
-
-    // let tempLng = parseFloat(longitude);
-    // let tempLat = parseFloat(latitude);
-
-    // console.log(res);
-    // console.log(tempLng);
-    // console.log(tempLat);
-
-    // setLongitude(tempLng);
-    // setLatitude(tempLat);
     setTimeStamp(parseInt(Math.floor(datetime.getTime() / 1000))); //Convert to seconds
-    setTimeout(function() {
+    setTimeout(function () {
       setLoading(false);
     }, 1500);
-    
   };
 
   const postTimestamp = async (e) => {
@@ -49,10 +42,8 @@ function App() {
       timeStamp,
     })
       .then((response) => {
-        // console.log("response data");
         // console.log(response.data);
         setSelectedDateList(response.data);
-        console.log(selectedDateList);
       })
       .catch((error) => {
         console.log(error);
@@ -81,6 +72,7 @@ function App() {
               {selectedDateList.map((val, key) => {
                 return (
                   <Marker
+                    key={key}
                     lat={val.latitude}
                     lng={val.longitude}
                     color="blue"
@@ -93,7 +85,9 @@ function App() {
           </div>
         </center>
       ) : (
-        <center><img src={screen} align="center"/></center>
+        <center>
+          <img src={screen} align="center" />
+        </center>
       )}
       <p>
         <center>
@@ -105,11 +99,34 @@ function App() {
               }}
               value={datetime}
             />
-            {/* <p>{timeStamp}</p> */}
             <p>
               <button onCLick="update" type="submit">
                 Track ISS
               </button>
+            </p>
+            <p>
+              <hr></hr>
+              <h3>People on ISS</h3>
+              <table
+                border="1"
+                cellspacing="0"
+                cellpadding="4"
+                width="300px"
+                align="center"
+              >
+                <tr>
+                  <th>Craft</th>
+                  <th>Name</th>
+                </tr>
+                {peopleList.map((val) => {
+                  return (
+                    <tr>
+                      <td>{val.craft}</td>
+                      <td>{val.name}</td>
+                    </tr>
+                  );
+                })}
+              </table>
             </p>
           </form>
         </center>
