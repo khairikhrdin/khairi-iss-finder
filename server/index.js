@@ -13,7 +13,6 @@ app.post("/post_date", async (req, res) => {
 
   const minusHourTS = [];
   const plusHourTS = [];
-  const concatArr = [];
 
   console.log(timeStamp);
 
@@ -23,12 +22,6 @@ app.post("/post_date", async (req, res) => {
     minusHourTS[i] = tempMinus;
     plusHourTS[i] = tempPlus;
   }
-
-  // const concatVar = concatArr.concat(minusHourTS, plusHourTS);
-  // console.log(concatVar);
-
-  // console.log("Minus: " + minusHourTS);
-  // console.log("Plus: " + plusHourTS);
 
   axios
     .get(
@@ -40,7 +33,7 @@ app.post("/post_date", async (req, res) => {
         plusHourTS
     )
     .then((response) => {
-      // console.log(response.data);
+      console.log(response.data);
       res.send(response.data);
     })
     .catch((error) => {
