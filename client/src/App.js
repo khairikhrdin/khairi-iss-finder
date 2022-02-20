@@ -15,6 +15,9 @@ function App() {
   const [timeStamp, setTimeStamp] = useState(0);
   const [selectedDateList, setSelectedDateList] = useState([]);
   const [peopleList, setPeopleList] = useState([]);
+  const [location, setLocation] = useState("");
+
+  const arrLoc = [];
 
   const initPage = async () => {
     setLoading(true); // Wait for response
@@ -44,6 +47,28 @@ function App() {
       .then((response) => {
         // console.log(response.data);
         setSelectedDateList(response.data);
+        
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+      selectedDateList.map(async (value) => {
+        await retrieveLoc(value.latitude, value.longitude);
+        // setLocation(arrLoc);
+        // console.log(location);
+      });
+    
+  };
+
+  const retrieveLoc = async (lat, lng) => {
+    await Axios.post("http://localhost:3001/post_loc", {
+      lat,
+      lng,
+    })
+      .then((response) => {
+        // arrLoc.push(response.data.timezone_id);
+        setLocation(response.data.timezone_id);
       })
       .catch((error) => {
         console.log(error);
@@ -70,6 +95,8 @@ function App() {
               defaultZoom={2}
             >
               {selectedDateList.map((val, key) => {
+                retrieveLoc(val.latitude, val.longitude);
+                // console.log("Key datelist " + key);
                 return (
                   <Marker
                     key={key}
@@ -78,6 +105,7 @@ function App() {
                     color="blue"
                     date={new Date(val.timestamp * 1000).toLocaleDateString()}
                     time={new Date(val.timestamp * 1000).toLocaleTimeString()}
+                    loc={location}
                   />
                 );
               })}

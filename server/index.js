@@ -33,11 +33,21 @@ app.post("/post_date", async (req, res) => {
         plusHourTS
     )
     .then((response) => {
-      console.log(response.data);
+      // console.log(response.data);
       res.send(response.data);
     })
     .catch((error) => {
       console.log(error);
+    });
+});
+
+app.post("/post_loc", async (req, res) => {
+  let { lat, lng } = req.body;
+  axios
+    .get("https://api.wheretheiss.at/v1/coordinates/" + lat + "," + lng)
+    .then((response) => {
+      console.log("Post Loc " + response.data.timezone_id);
+      res.send(response.data);
     });
 });
 

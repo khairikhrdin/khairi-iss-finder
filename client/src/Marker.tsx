@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 
 const Marker = (props: any) => {
-  const { color, name, lat, lng, time, date } = props;
+  const { color, name, lat, lng, time, date, loc } = props;
   return (
     <div>
       <div className="wrapper">
@@ -18,6 +18,7 @@ const Marker = (props: any) => {
           </p>
           <p>Date: {date.toString()}</p>
           <p>Time: {time.toString()}</p>
+          <p>Location: {loc}</p>
         </div>
       </div>
     </div>
